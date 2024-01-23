@@ -1,0 +1,9 @@
+{
+  "name": "Currency",
+  "tree": {
+    "$path": "src",
+    "__modules__": {
+      "$path": "./node_modules"
+    }
+  }
+}
