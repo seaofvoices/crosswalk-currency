@@ -30,6 +30,7 @@
   },
   "packageManager": "yarn@4.0.2",
   "peerDependencies": {
+    "@crosswalk-game/data-handler": "*",
     "crosswalk-channels": "*"
   },
   "dependencies": {

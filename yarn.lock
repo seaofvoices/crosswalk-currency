@@ -12,6 +12,7 @@ __metadata:
     luau-disk: "npm:^0.1.0"
     npmluau: "npm:^0.1.1"
   peerDependencies:
+    "@crosswalk-game/data-handler": "*"
     crosswalk-channels: "*"
   languageName: unknown
   linkType: soft
