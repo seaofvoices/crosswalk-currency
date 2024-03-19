@@ -1,4 +1,4 @@
-# crosswalk-currency
+# Currency
 
 This [crosswalk module](https://github.com/seaofvoices/crosswalk) simplifies the handling of game-specific currencies. It provides the necessary functions to add, spend or check funds for individual players.
 
@@ -6,16 +6,16 @@ This module requires the [Channels](https://github.com/seaofvoices/crosswalk-cha
 
 ## Installation
 
-Add `crosswalk-currency` in your dependencies:
+Add `@crosswalk-game/currency` in your dependencies:
 
 ```bash
-yarn add crosswalk-currency
+yarn add @crosswalk-game/currency
 ```
 
 Or if you are using `npm`:
 
 ```bash
-npm install crosswalk-currency
+npm install @crosswalk-game/currency
 ```
 
 ## API
