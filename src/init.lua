@@ -20,7 +20,21 @@ return function(Modules, _, _)
     end
 
     function module.Init()
-        playerDatas = Modules.DataHandler.register('currency', getDefault)
+        playerDatas = Modules.DataHandler.register(
+            'currency',
+            getDefault,
+            function(player: Player, data: Data)
+                Modules.Channels.sendLocal(
+                    player,
+                    'currencies',
+                    Map.merge(data.custom, { default = data.default })
+                )
+                Modules.Channels.sendLocal(player, 'currency', data.default)
+                for currencyName, amount in data.custom do
+                    Modules.Channels.sendLocal(player, `currency_{currencyName}`, amount)
+                end
+            end
+        )
     end
 
     local function sendToChannel(player: Player, data: Data, currencyChanged: string?)
@@ -78,7 +92,7 @@ return function(Modules, _, _)
         if currencyName == nil then
             if data.default >= amount then
                 data.default -= amount
-                sendToChannel(player, data, currencyName)
+                sendToChannel(player, data, nil)
                 return true
             end
         else
