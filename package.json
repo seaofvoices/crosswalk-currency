@@ -1,6 +1,6 @@
 {
   "name": "@crosswalk-game/currency",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A crosswalk module to handle in-game currencies",
   "license": "MIT",
   "repository": {
@@ -25,15 +25,15 @@
     "style-check": "stylua . --check",
     "verify-pack": "yarn pack --dry-run"
   },
+  "dependencies": {
+    "luau-disk": "^0.1.1"
+  },
   "devDependencies": {
     "npmluau": "^0.1.1"
   },
-  "packageManager": "yarn@4.0.2",
   "peerDependencies": {
     "@crosswalk-game/data-handler": "*",
     "crosswalk-channels": "*"
   },
-  "dependencies": {
-    "luau-disk": "^0.1.0"
-  }
+  "packageManager": "yarn@4.0.2"
 }
