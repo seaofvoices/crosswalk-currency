@@ -28,6 +28,18 @@ Currency.give(player: Player, amount: number, currencyName?: string)
 
 Give currency to a player. If `currencyName` is provided, the specified custom currency will be incremented; otherwise, the default currency will be incremented.
 
+Throws an error if the player data is not available.
+
+### `tryGive`
+
+```lua
+Currency.tryGive(player: Player, amount: number, currencyName?: string): boolean
+```
+
+Give currency to a player. If `currencyName` is provided, the specified custom currency will be incremented; otherwise, the default currency will be incremented.
+
+Returns `false` if the player data is not available.
+
 ### `spend`
 
 ```lua
