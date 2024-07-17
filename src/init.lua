@@ -89,6 +89,36 @@ return function(Modules, _, _)
         sendToChannel(player, data, customCurrency)
     end
 
+    function module.tryGive(player: Player, amount: number, currencyName: string?): boolean
+        if amount == 0 then
+            return true
+        end
+
+        local data: Data? = playerDatas:tryGet(player)
+
+        if data == nil then
+            return false
+        end
+
+        local data = data :: Data
+
+        local customCurrency = getCustomCurrency(currencyName)
+
+        if customCurrency == nil then
+            data.default += amount
+        else
+            if _G.DEV then
+                verifyCurrencyName(customCurrency)
+            end
+            local custom = data.custom
+            custom[customCurrency] = amount + (custom[customCurrency] or 0)
+        end
+
+        sendToChannel(player, data, customCurrency)
+
+        return true
+    end
+
     function module.spend(player: Player, amount: number, currencyName: string?): boolean
         local data: Data = playerDatas:expect(player)
 
