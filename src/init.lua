@@ -55,41 +55,46 @@ return function(Modules, _, _)
     end
 
     local function verifyCurrencyName(name: string)
-        if name == 'default' then
-            error(
-                "the currency name 'default' is reserved, please use a different name "
-                    .. 'or do not provide the currency name to use the default currency'
-            )
-        end
         if not string.match('^[%w_]+$', name) then
             error(`invalid currency name '{name}' (it should contain only letters, numbers or '_')`)
         end
     end
 
-    function module.give(player: Player, amount: number, currencyName: string?)
-        local data: Data = playerDatas:expect(player)
+    local function getCustomCurrency(currencyName: string?): string?
+        return if currencyName == nil
+                or currencyName == ''
+                or currencyName == 'default'
+            then nil
+            else currencyName
+    end
 
+    function module.give(player: Player, amount: number, currencyName: string?)
         if amount == 0 then
             return
         end
 
-        if currencyName == nil then
+        local data: Data = playerDatas:expect(player)
+        local customCurrency = getCustomCurrency(currencyName)
+
+        if customCurrency == nil then
             data.default += amount
         else
             if _G.DEV then
-                verifyCurrencyName(currencyName)
+                verifyCurrencyName(customCurrency)
             end
             local custom = data.custom
-            custom[currencyName] = amount + (custom[currencyName] or 0)
+            custom[customCurrency] = amount + (custom[customCurrency] or 0)
         end
 
-        sendToChannel(player, data, currencyName)
+        sendToChannel(player, data, customCurrency)
     end
 
     function module.spend(player: Player, amount: number, currencyName: string?): boolean
         local data: Data = playerDatas:expect(player)
 
-        if currencyName == nil then
+        local customCurrency = getCustomCurrency(currencyName)
+
+        if customCurrency == nil then
             if data.default >= amount then
                 data.default -= amount
                 sendToChannel(player, data, nil)
@@ -97,12 +102,12 @@ return function(Modules, _, _)
             end
         else
             if _G.DEV then
-                verifyCurrencyName(currencyName)
+                verifyCurrencyName(customCurrency)
             end
-            local currencyAmount = data.custom[currencyName] or 0
+            local currencyAmount = data.custom[customCurrency] or 0
             if currencyAmount >= amount then
-                data.custom[currencyName] = currencyAmount - amount
-                sendToChannel(player, data, currencyName)
+                data.custom[customCurrency] = currencyAmount - amount
+                sendToChannel(player, data, customCurrency)
                 return true
             end
         end
@@ -113,13 +118,15 @@ return function(Modules, _, _)
     function module.hasFunds(player: Player, amount: number, currencyName: string?): boolean
         local data: Data = playerDatas:expect(player)
 
-        if currencyName == nil then
+        local customCurrency = getCustomCurrency(currencyName)
+
+        if customCurrency == nil then
             return data.default >= amount
         else
             if _G.DEV then
-                verifyCurrencyName(currencyName)
+                verifyCurrencyName(customCurrency)
             end
-            return (data.custom[currencyName] or 0) >= amount
+            return (data.custom[customCurrency] or 0) >= amount
         end
     end
 
