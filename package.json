@@ -1,6 +1,6 @@
 {
   "name": "@crosswalk-game/currency",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A crosswalk module to handle in-game currencies",
   "license": "MIT",
   "repository": {
