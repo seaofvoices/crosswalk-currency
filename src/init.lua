@@ -160,5 +160,20 @@ return function(Modules, _, _)
         end
     end
 
+    function module.get(player: Player, currencyName: string?): number
+        local data: Data = playerDatas:expect(player)
+
+        local customCurrency = getCustomCurrency(currencyName)
+
+        if customCurrency == nil then
+            return data.default or 0
+        else
+            if _G.DEV then
+                verifyCurrencyName(customCurrency)
+            end
+            return data.custom[customCurrency] or 0
+        end
+    end
+
     return module
 end
