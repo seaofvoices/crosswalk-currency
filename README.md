@@ -56,6 +56,14 @@ Currency.hasFunds(player: Player, amount: number, currencyName?: string): boolea
 
 Check if a player has sufficient funds. Returns `true` if the player has enough currency (default or custom, depending on the presence of `currencyName`), otherwise `false`.
 
+### `get`
+
+```lua
+Currency.get(player: Player, currencyName?: string): number
+```
+
+Return the current amount of currency (default or custom, depending on the presence of `currencyName`) of a given player.
+
 ## Listen to Currency Changes
 
 The module uses the [Channels](https://github.com/seaofvoices/crosswalk-channels) module to make the different currency amounts available. It will publish the amounts on different **local** channels:

@@ -1,5 +1,6 @@
 # Changelog
 
+- add `Currency.get` function ([#12](https://github.com/seaofvoices/crosswalk-currency/pull/12))
 - fix custom currency name validation ([#11](https://github.com/seaofvoices/crosswalk-currency/pull/11))
 
 ## 0.1.2
