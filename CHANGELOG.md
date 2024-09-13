@@ -1,5 +1,7 @@
 # Changelog
 
+- fix custom currency name validation ([#11](https://github.com/seaofvoices/crosswalk-currency/pull/11))
+
 ## 0.1.2
 
 - add `Currency.tryGive` that returns `true` if the currency was given to the player, or `false` if the player data is not available ([#7](https://github.com/seaofvoices/crosswalk-currency/pull/7))

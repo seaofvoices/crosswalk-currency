@@ -55,7 +55,7 @@ return function(Modules, _, _)
     end
 
     local function verifyCurrencyName(name: string)
-        if not string.match('^[%w_]+$', name) then
+        if not string.match(name, '^[%w_]+$') then
             error(`invalid currency name '{name}' (it should contain only letters, numbers or '_')`)
         end
     end
