@@ -1,5 +1,7 @@
 # Changelog
 
+- add economy event logging ([#14](https://github.com/seaofvoices/crosswalk-currency/pull/14))
+
 ## 0.1.3
 
 - add `Currency.get` function ([#12](https://github.com/seaofvoices/crosswalk-currency/pull/12))
