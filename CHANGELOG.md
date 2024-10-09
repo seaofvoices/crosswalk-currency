@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.1.4
+
 - add economy event logging ([#14](https://github.com/seaofvoices/crosswalk-currency/pull/14))
 
 ## 0.1.3
