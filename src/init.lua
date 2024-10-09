@@ -10,6 +10,9 @@ return function(Modules, _, _)
         custom: { [string]: number },
     }
 
+    local submitEconomyEvent = false
+    local DEFAULT_TRANSACTION_TYPE = 'Unspecified'
+
     local playerDatas
 
     local function getDefault(): Data
@@ -35,6 +38,12 @@ return function(Modules, _, _)
                 end
             end
         )
+    end
+
+    function module.configure(config: { submitEconomyEvent: boolean? })
+        if config.submitEconomyEvent ~= nil then
+            submitEconomyEvent = config.submitEconomyEvent
+        end
     end
 
     local function sendToChannel(player: Player, data: Data, currencyChanged: string?)
@@ -68,28 +77,62 @@ return function(Modules, _, _)
             else currencyName
     end
 
-    function module.give(player: Player, amount: number, currencyName: string?)
-        if amount == 0 then
-            return
-        end
-
-        local data: Data = playerDatas:expect(player)
+    local function giveCurrency(
+        player: Player,
+        data: Data,
+        amount: number,
+        currencyName: string?,
+        transactionType: string | Enum.AnalyticsEconomyTransactionType?
+    )
         local customCurrency = getCustomCurrency(currencyName)
 
+        local balance = nil
         if customCurrency == nil then
             data.default += amount
+            balance = data.default
         else
             if _G.DEV then
                 verifyCurrencyName(customCurrency)
             end
             local custom = data.custom
             custom[customCurrency] = amount + (custom[customCurrency] or 0)
+            balance = custom[customCurrency]
+        end
+
+        if submitEconomyEvent then
+            Modules.Analytics.logEconomySource(
+                player,
+                customCurrency or 'default',
+                transactionType or DEFAULT_TRANSACTION_TYPE,
+                amount,
+                balance
+            )
         end
 
         sendToChannel(player, data, customCurrency)
     end
 
-    function module.tryGive(player: Player, amount: number, currencyName: string?): boolean
+    function module.give(
+        player: Player,
+        amount: number,
+        currencyName: string?,
+        transactionType: string | Enum.AnalyticsEconomyTransactionType?
+    )
+        if amount == 0 then
+            return
+        end
+
+        local data: Data = playerDatas:expect(player)
+
+        giveCurrency(player, data, amount, currencyName, transactionType)
+    end
+
+    function module.tryGive(
+        player: Player,
+        amount: number,
+        currencyName: string?,
+        transactionType: string | Enum.AnalyticsEconomyTransactionType?
+    ): boolean
         if amount == 0 then
             return true
         end
@@ -98,28 +141,18 @@ return function(Modules, _, _)
 
         if data == nil then
             return false
-        end
-
-        local data = data :: Data
-
-        local customCurrency = getCustomCurrency(currencyName)
-
-        if customCurrency == nil then
-            data.default += amount
         else
-            if _G.DEV then
-                verifyCurrencyName(customCurrency)
-            end
-            local custom = data.custom
-            custom[customCurrency] = amount + (custom[customCurrency] or 0)
+            giveCurrency(player, data, amount, currencyName, transactionType)
+            return true
         end
-
-        sendToChannel(player, data, customCurrency)
-
-        return true
     end
 
-    function module.spend(player: Player, amount: number, currencyName: string?): boolean
+    function module.spend(
+        player: Player,
+        amount: number,
+        currencyName: string?,
+        transactionType: string | Enum.AnalyticsEconomyTransactionType?
+    ): boolean
         local data: Data = playerDatas:expect(player)
 
         local customCurrency = getCustomCurrency(currencyName)
@@ -127,6 +160,17 @@ return function(Modules, _, _)
         if customCurrency == nil then
             if data.default >= amount then
                 data.default -= amount
+
+                if submitEconomyEvent then
+                    Modules.Analytics.logEconomySink(
+                        player,
+                        'default',
+                        transactionType or DEFAULT_TRANSACTION_TYPE,
+                        amount,
+                        data.default
+                    )
+                end
+
                 sendToChannel(player, data, nil)
                 return true
             end
@@ -137,6 +181,17 @@ return function(Modules, _, _)
             local currencyAmount = data.custom[customCurrency] or 0
             if currencyAmount >= amount then
                 data.custom[customCurrency] = currencyAmount - amount
+
+                if submitEconomyEvent then
+                    Modules.Analytics.logEconomySink(
+                        player,
+                        customCurrency,
+                        transactionType or DEFAULT_TRANSACTION_TYPE,
+                        amount,
+                        data.custom[customCurrency]
+                    )
+                end
+
                 sendToChannel(player, data, customCurrency)
                 return true
             end
